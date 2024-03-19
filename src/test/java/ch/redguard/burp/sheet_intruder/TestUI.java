@@ -12,16 +12,19 @@ public class TestUI {
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setLayout(new BorderLayout());
 
-        jFrame.setPreferredSize(new Dimension(1500, 800));
+        Dimension preferredSize = new Dimension(1280, 800);
+        jFrame.setPreferredSize(preferredSize);
         JMenuBar menuBar = new JMenuBar();
         jFrame.setJMenuBar(menuBar);
         jFrame.pack();
         var uiPanel = new MainPanel();
+        var pane = new JScrollPane(uiPanel);
+        uiPanel.setPreferredSize(preferredSize);
 
         Container content = jFrame.getContentPane();
         content.setLayout(new BorderLayout());
 
-        content.add(uiPanel, BorderLayout.WEST);
+        content.add(pane, BorderLayout.WEST);
         jFrame.setVisible(true);
     }
 }

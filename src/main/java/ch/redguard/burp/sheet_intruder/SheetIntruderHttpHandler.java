@@ -13,6 +13,7 @@ import ch.redguard.burp.sheet_intruder.parser.ParsedTag;
 import ch.redguard.burp.sheet_intruder.parser.Replacer;
 import ch.redguard.burp.sheet_intruder.parser.TagByteParser;
 import ch.redguard.burp.sheet_intruder.ui.SelectedFile;
+import ch.redguard.burp.sheet_intruder.ui.SelectedRequestLocationOptions;
 
 import java.io.File;
 import java.util.Optional;
@@ -31,37 +32,40 @@ public class SheetIntruderHttpHandler implements burp.api.montoya.http.handler.H
     @Override
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
         HttpRequest newRequest = requestToBeSent;
-        switch (requestToBeSent.toolSource().toolType()) {
+        var toolType = requestToBeSent.toolSource().toolType();
+        switch (toolType) {
             case SCANNER, INTRUDER, REPEATER, PROXY -> {
-                var body = requestToBeSent.body().getBytes();
-                var tagByteParser = new TagByteParser(body, byteUtils, logging);
-                ParsedTag parsedTag = tagByteParser.getTagContent();
+                if (SelectedRequestLocationOptions.getInstance().isToolActive(toolType)) {
+                    var body = requestToBeSent.body().getBytes();
+                    var tagByteParser = new TagByteParser(body, byteUtils, logging);
+                    ParsedTag parsedTag = tagByteParser.getTagContent();
 
-                if (parsedTag.isEmptyOrInvalid()) {
-                    logging.raiseDebugEvent("No valid tag found, not modifying request");
-                    break;
-                }
+                    if (parsedTag.isEmptyOrInvalid()) {
+                        logging.raiseDebugEvent("No valid tag found, not modifying request");
+                        break;
+                    }
 
-                var replacements = new JsonParser(parsedTag.getContent(), logging).parseJson();
-                if (replacements.isEmpty()) {
-                    logging.raiseDebugEvent("No valid json found, not modifying request");
-                    break;
-                }
-                logging.raiseDebugEvent("Found replacement config " + replacements);
+                    var replacements = new JsonParser(parsedTag.getContent(), logging).parseJson();
+                    if (replacements.isEmpty()) {
+                        logging.raiseDebugEvent("No valid json found, not modifying request");
+                        break;
+                    }
+                    logging.raiseDebugEvent("Found replacement config " + replacements);
 
-                Optional<File> selectedFile = SelectedFile.getInstance().getFile();
+                    Optional<File> selectedFile = SelectedFile.getInstance().getFile();
 
-                if (selectedFile.isEmpty()) {
-                    logging.raiseDebugEvent("No file configured, not modifying request");
-                    break;
-                }
+                    if (selectedFile.isEmpty()) {
+                        logging.raiseDebugEvent("No file configured, not modifying request");
+                        break;
+                    }
 
-                logging.raiseDebugEvent("Using configured file " + selectedFile.get().getPath());
+                    logging.raiseDebugEvent("Using configured file " + selectedFile.get().getPath());
 
-                var newBody =
-                        new Replacer(body, replacements, parsedTag, selectedFile.get(), logging).getReplacedBody();
-                if (newBody.isPresent()) {
-                    newRequest = requestToBeSent.withBody(ByteArray.byteArray(newBody.get()));
+                    var newBody =
+                            new Replacer(body, replacements, parsedTag, selectedFile.get(), logging).getReplacedBody();
+                    if (newBody.isPresent()) {
+                        newRequest = requestToBeSent.withBody(ByteArray.byteArray(newBody.get()));
+                    }
                 }
             }
             default -> {

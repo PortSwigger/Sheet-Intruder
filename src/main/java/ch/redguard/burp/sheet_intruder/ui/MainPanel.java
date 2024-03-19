@@ -1,11 +1,13 @@
 package ch.redguard.burp.sheet_intruder.ui;
 
+import burp.api.montoya.core.ToolType;
 import ch.redguard.burp.sheet_intruder.excel.ExcelParser;
 import ch.redguard.burp.sheet_intruder.tag.TagType;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 public class MainPanel extends JPanel {
@@ -32,6 +34,9 @@ public class MainPanel extends JPanel {
 
         var reloadFileButton = new JButton("Reload file");
         reloadFileButton.addActionListener(actionEvent -> loadFile(statusLabel, new File(fileNameTextField.getText())));
+
+        var modifyRequestLocationLabel = new JMultilineLabel("Modify requests in the following features:");
+        JPanel modifyRequestLocationPanel = getModifyRequestLocationPanel();
 
         JLabel howToLabel = new JLabel("How To");
         howToLabel.setFont(this.getFont().deriveFont(20f).deriveFont(this.getFont().getStyle() | Font.BOLD));
@@ -97,30 +102,82 @@ public class MainPanel extends JPanel {
                 Replace cells referenced by their cell number with the given substitution
                 """);
 
+
+        var debugCheckBox = new JCheckBox("Log Debug Messages in Burp Event Log", false);
+        debugCheckBox.addActionListener(e -> {
+            JCheckBox checkbox = (JCheckBox) e.getSource();
+            DebugMode.getInstance().setDebug(checkbox.isSelected());
+        });
+
         cellMode.setEditable(false);
         cellMode.setBorder(BorderFactory.createEtchedBorder());
 
-
-        this.add(headerLabel, getConstraints(0, 0, 2, 1));
-        this.add(subtitle, getConstraints(0, 1, 2, 1));
-        this.add(separator, getConstraints(0, 2, 2, 1));
+        this.add(headerLabel, getConstraints(0, 0, 3, 1));
+        this.add(subtitle, getConstraints(0, 1, 3, 1));
+        this.add(separator, getConstraints(0, 2, 3, 1));
 
         this.add(browseButton, getConstraints(0, 3, 1, 0.1f));
         this.add(fileNameTextField, getConstraints(1, 3, 1, 0.8f));
         this.add(reloadFileButton, getConstraints(2, 3, 1, 0.1f));
 
-        this.add(statusLabel, getConstraints(0, 4, 2, 1));
-        this.add(howToLabel, getConstraints(0, 5, 2, 1, new Insets(10, 10, 5, 0)));
-        this.add(howTo, getConstraints(0, 6, 2, 1));
-        this.add(valueReplaceMode, getConstraints(0, 7, 2, 1, new Insets(10, 10, 5, 0)));
-        this.add(replaceMode, getConstraints(0, 8, 2, 1, new Insets(10, 25, 0, 0)));
-        this.add(howTo2, getConstraints(0, 9, 2, 1));
-        this.add(cellReplacementMode, getConstraints(0, 10, 2, 1, new Insets(10, 10, 5, 0)));
-        this.add(cellMode, getConstraints(0, 11, 2, 1, new Insets(10, 25, 0, 0)));
-        this.add(howTo3, getConstraints(0, 12, 2, 1));
+        this.add(statusLabel, getConstraints(0, 4, 3, 1));
 
+        this.add(separator, getConstraints(0, 5, 3, 1));
+
+        this.add(modifyRequestLocationLabel, getConstraints(0, 6, 3, 1, new Insets(20, 10, 0, 0)));
+        this.add(modifyRequestLocationPanel, getConstraints(0, 7, 3, 1, new Insets(0, 10, 5, 0)));
+
+        this.add(howToLabel, getConstraints(0, 8, 3, 1, new Insets(10, 10, 5, 0)));
+        this.add(howTo, getConstraints(0, 9, 3, 1));
+        this.add(valueReplaceMode, getConstraints(0, 10, 3, 1, new Insets(10, 10, 5, 0)));
+        this.add(replaceMode, getConstraints(0, 11, 3, 1, new Insets(10, 25, 0, 0)));
+        this.add(howTo2, getConstraints(0, 12, 3, 1));
+        this.add(cellReplacementMode, getConstraints(0, 13, 3, 1, new Insets(10, 10, 5, 0)));
+        this.add(cellMode, getConstraints(0, 14, 3, 1, new Insets(10, 25, 0, 0)));
+        this.add(howTo3, getConstraints(0, 15, 3, 1));
+
+        this.add(debugCheckBox, getConstraints(0, 16, 3, 1));
 
         addBottomPadding();
+    }
+
+    private static JPanel getModifyRequestLocationPanel() {
+        var selectedOptions = SelectedRequestLocationOptions.getInstance();
+        JPanel modifyRequestLocationPanel = new JPanel();
+        modifyRequestLocationPanel.setLayout(new BoxLayout(modifyRequestLocationPanel, BoxLayout.X_AXIS));
+
+        // Create checkboxes for each value
+        JCheckBox scannerCheckbox = new JCheckBox("Scanner", true);
+        JCheckBox intruderCheckbox = new JCheckBox("Intruder", true);
+        JCheckBox repeaterCheckbox = new JCheckBox("Repeater", true);
+        JCheckBox proxyCheckbox = new JCheckBox("Proxy", true);
+
+        // Add checkboxes to the modifyRequestLocationPanel
+        modifyRequestLocationPanel.add(scannerCheckbox);
+        modifyRequestLocationPanel.add(intruderCheckbox);
+        modifyRequestLocationPanel.add(repeaterCheckbox);
+        modifyRequestLocationPanel.add(proxyCheckbox);
+
+
+        ActionListener actionListener = e -> {
+            JCheckBox checkbox = (JCheckBox) e.getSource();
+            if (checkbox == scannerCheckbox) {
+                selectedOptions.setStateOfTool(ToolType.SCANNER, checkbox.isSelected());
+            } else if (checkbox == intruderCheckbox) {
+                selectedOptions.setStateOfTool(ToolType.INTRUDER, checkbox.isSelected());
+            } else if (checkbox == repeaterCheckbox) {
+                selectedOptions.setStateOfTool(ToolType.REPEATER, checkbox.isSelected());
+            } else if (checkbox == proxyCheckbox) {
+                selectedOptions.setStateOfTool(ToolType.PROXY, checkbox.isSelected());
+            }
+        };
+
+        scannerCheckbox.addActionListener(actionListener);
+        intruderCheckbox.addActionListener(actionListener);
+        repeaterCheckbox.addActionListener(actionListener);
+        proxyCheckbox.addActionListener(actionListener);
+
+        return modifyRequestLocationPanel;
     }
 
     private void addBottomPadding() {

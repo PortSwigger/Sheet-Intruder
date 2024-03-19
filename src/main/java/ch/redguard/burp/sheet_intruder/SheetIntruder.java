@@ -14,24 +14,21 @@ public class SheetIntruder implements BurpExtension {
         Extension extension = api.extension();
         extension.setName("Sheet Intruder");
         extension.registerUnloadingHandler(new SheetIntruderUnloadingHandler());
-        Logging logging = api.logging();
+        Logging logging = new ConfiguredLogging(api.logging());
         logging.logToOutput("Sheet Intruder loading...");
 
         var uiPanel = new MainPanel();
-
-        var pane = new JTabbedPane();
-        pane.addTab("Select Excel", uiPanel);
-
+        var pane = new JScrollPane(uiPanel);
         var registration = api.userInterface().registerSuiteTab("Sheet Intruder", pane);
-        api.logging().raiseDebugEvent("Registered tab: " + registration.isRegistered());
+        logging.raiseDebugEvent("Registered tab: " + registration.isRegistered());
 
         var handlerRegistration =
                 api.http().registerHttpHandler(new SheetIntruderHttpHandler(api.utilities().byteUtils(),
-                        api.logging()));
+                        logging));
         logging.logToOutput("Registering HTTP Handler: " + handlerRegistration.isRegistered());
 
         var contextMenuRegistration =
-                api.userInterface().registerContextMenuItemsProvider(new SheetIntruderMenuItemsProvider(api.utilities().byteUtils(), api.logging()));
+                api.userInterface().registerContextMenuItemsProvider(new SheetIntruderMenuItemsProvider(api.utilities().byteUtils(), logging));
         logging.logToOutput("Registering Context Menu Handler: " + contextMenuRegistration.isRegistered());
 
         logging.logToOutput("Sheet Intruder loaded");

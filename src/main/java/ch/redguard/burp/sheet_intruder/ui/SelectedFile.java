@@ -26,8 +26,8 @@ public class SelectedFile {
         this.file = Optional.of(file);
     }
 
-    public void unloadFile() {
-        this.file = Optional.empty();
+    public void resetState() {
+        instance = null;
     }
 
 }
