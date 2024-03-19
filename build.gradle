@@ -16,11 +16,11 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 
-    compileOnly 'net.portswigger.burp.extensions:montoya-api:2023.10.3'
-    testImplementation 'net.portswigger.burp.extensions:montoya-api:2023.10.3'
+    compileOnly 'net.portswigger.burp.extensions:montoya-api:2023.12.1'
+    testImplementation 'net.portswigger.burp.extensions:montoya-api:2023.12.1'
 
-    implementation('org.apache.poi:poi:5.2.4')
-    implementation('org.apache.poi:poi-ooxml:5.2.4')
+    implementation('org.apache.poi:poi:5.2.5')
+    implementation('org.apache.poi:poi-ooxml:5.2.5')
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
