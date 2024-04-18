@@ -1,0 +1,13 @@
+Uuid: 
+ExtensionType: 1
+Name: Sheet Intruder
+RepoName: sheet-intruder
+ScreenVersion: TODO
+SerialVersion: 0
+MinPlatformVersion: 0
+ProOnly: False
+Author: TODO
+ShortDescription: TODO
+EntryPoint: build/libs/sheet-intruder-all.jar
+BuildCommand: gradle jar
+SupportedProducts: Pro, Community
