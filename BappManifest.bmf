@@ -1,13 +1,13 @@
-Uuid: 
+Uuid: dcf91bdb71c04bf491b372da1ab18e42 
 ExtensionType: 1
 Name: Sheet Intruder
 RepoName: sheet-intruder
-ScreenVersion: TODO
-SerialVersion: 0
+ScreenVersion: 1.1.0
+SerialVersion: 2
 MinPlatformVersion: 0
 ProOnly: False
-Author: TODO
-ShortDescription: TODO
-EntryPoint: build/libs/sheet-intruder-all.jar
-BuildCommand: gradle jar
+Author: Milan Bharanya, Redguard AG
+ShortDescription: Simplify the process of fuzzing for Excel file uploads.
+EntryPoint: build/libs/sheet-intruder-1.1.0-all.jar
+BuildCommand: ./gradlew build shadowJar
 SupportedProducts: Pro, Community

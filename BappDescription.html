@@ -1,1 +1,19 @@
-TODO
+<p>Sheet Intruder is a Burp Suite extension designed to simplify the process of fuzzing for Excel file uploads. It works by representing the content of an Excel file as a tag, which can then be integrated into various locations. This tag then allows configuration such as replacements for fuzzing targets.</p>
+
+<p>Features:</p>
+
+<ul>
+	<li>Seamless Integration: Sheet Intruder seamlessly integrates into Burp Suite's Intruder, Scanner, and Repeater tools, allowing for efficient and comprehensive Excel file manipulation during different stages of testing.</li>
+	<li>Both .xls and .xlsx file formats are supported.</li>
+	<li>Value Replacement Mode: Use the "&lt;$SheetIntruder&gt;" tag to define value replacements within the Excel file. This mode allows you to search for specific values within cells and replace them with desired substitutions.</li>
+	<li>Cell Replacement Mode: Use the "&lt;$SheetIntruderCell&gt;" tag to perform cell-based replacements. You can replace cells either by referencing their cell number (e.g., "A1", "B1") or by specifying cell ranges (e.g., "A1:B12", "CustomSheet! A1:D5").</li>
+</ul>
+
+<p>Workflow:</p>
+
+<ol>
+	<li>Choose your Excel file (.xls and .xlsx supported)</li>
+	<li>The selected file is loaded into the extension</li>
+	<li>In Repeater, Proxy, Scanner or Intruder you are now able to include the tags</li>
+	<li>Before sending the request the provided Excel file is read and the requested modifications made</li>
+</ol>
